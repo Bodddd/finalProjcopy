@@ -69,10 +69,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                 map.addMarker(landmarkMarkerOptions.position(latLng))
             }
-
-//            landmarksLatLng?.forEach { latLng ->
-//                map.addMarker(MarkerOptions().position(latLng))
-//            }
         }
 
         val cityLatLng = arguments?.getParcelable<LatLng>("cityLatLng")
@@ -107,7 +103,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             map.addPolyline(
                                 PolylineOptions().addAll(decodedPath)
                                     .color(routeColor)
-                                    .width(10f)
+                                    .width(12f)
                             )
                         }
                     } else {
