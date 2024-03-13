@@ -5,12 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -44,24 +46,38 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        map.setMapStyle(MapStyleOptions(getString(R.string.style_json)))
+        context?.let { ctx ->
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ctx, R.raw.style_json))
+        } ?: Log.e("MapsFragment", "Context is null, cannot set map style")
 
         arguments?.let { bundle ->
             val cityLatLng = bundle.getParcelable<LatLng>("cityLatLng")
             val landmarksLatLng = bundle.getParcelableArrayList<LatLng>("landmarksLatLng")
 
             cityLatLng?.let {
-                map.addMarker(MarkerOptions().position(it).title("City"))
+                val cityMarkerOptions = MarkerOptions()
+                    .position(it)
+                    .title("City")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                map.addMarker(cityMarkerOptions)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 13.5F))
             }
 
             landmarksLatLng?.forEach { latLng ->
-                map.addMarker(MarkerOptions().position(latLng))
+                val landmarkMarkerOptions = MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                map.addMarker(landmarkMarkerOptions.position(latLng))
             }
+
+//            landmarksLatLng?.forEach { latLng ->
+//                map.addMarker(MarkerOptions().position(latLng))
+//            }
         }
 
         val cityLatLng = arguments?.getParcelable<LatLng>("cityLatLng")
         val landmarksLatLng = arguments?.getParcelableArrayList<LatLng>("landmarksLatLng")
+        val routeColor = ContextCompat.getColor(requireContext(), R.color.magenta_haze)
 
         lifecycleScope.launch {
             val apiKey = getString(R.string.google_maps_key)
@@ -88,7 +104,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                 ?: return@launch
                         val decodedPath = PolyUtil.decode(polylinePoints)
                         withContext(Dispatchers.Main) {
-                            map.addPolyline(PolylineOptions().addAll(decodedPath))
+                            map.addPolyline(
+                                PolylineOptions().addAll(decodedPath)
+                                    .color(routeColor)
+                                    .width(10f)
+                            )
                         }
                     } else {
                         Log.e(
