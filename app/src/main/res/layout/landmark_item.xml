@@ -2,14 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp">
+    android:layout_height="wrap_content"
+    android:background="@color/periwinkle"
+    android:padding="4dp">
 
     <ImageView
         android:id="@+id/landmarkImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -18,10 +23,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:textColor="@color/magenta_haze"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/landmarkImage"
-        app:layout_constraintTop_toTopOf="@+id/landmarkImage"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/landmarkImage" />
+        app:layout_constraintStart_toEndOf="@+id/landmarkImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="409dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        android:outlineAmbientShadowColor="@color/black"
+        android:outlineSpotShadowColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/landmarkImage"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="74dp" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

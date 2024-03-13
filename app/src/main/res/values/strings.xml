@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Final</string>
-    <string name="hint_enter_city">enter city</string>
+    <string name="hint_enter_city">Enter City</string>
+    <string name="google_maps_key">AIzaSyDW4dB2kuQZ_YPI0YCEE6cxrnXKSphpK2I</string>
 </resources>

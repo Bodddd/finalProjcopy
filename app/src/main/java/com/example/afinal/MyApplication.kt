@@ -8,8 +8,14 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        instance = this
         if (!Places.isInitialized()) {
             Places.initialize(applicationContext, "AIzaSyDW4dB2kuQZ_YPI0YCEE6cxrnXKSphpK2I")
         }
+    }
+
+    companion object {
+        lateinit var instance: MyApplication
+            private set
     }
 }

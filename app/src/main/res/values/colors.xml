@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="payne_gray">#657380</color>
+    <color name="dark_purple">#420039</color>
+    <color name="magenta_haze">#932F6D</color>
+    <color name="orchid">#E07BE0</color>
+    <color name="teal200">#81D4FA</color>
+    <color name="teal500">#3F51B5</color>
+    <color name="periwinkle">#DCCCFF</color>
+
+</resources>

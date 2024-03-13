@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
@@ -13,11 +12,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnAuthLaunch {
-    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            if (supportFragmentManager.findFragmentById(R.id.container) == null) {
+                showListFragment()
+            }
+        }
     }
 
     override fun launch(intent: Intent) {
@@ -26,7 +30,7 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch {
 
     override fun showListFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, CityInputFragment())
+            .replace(R.id.container, LandmarksListFragment())
             .commit()
     }
 

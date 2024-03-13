@@ -8,29 +8,32 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.android.libraries.places.api.model.AutocompletePrediction
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class CityAutocompleteAdapter(
     context: Context,
     private val placesClient: PlacesClient,
-    private val lifecycleScope: LifecycleCoroutineScope
-) : ArrayAdapter<AutocompletePrediction>(context, android.R.layout.simple_dropdown_item_1line), Filterable {
+    private val coroutineScope: CoroutineScope
+) : ArrayAdapter<AutocompletePrediction>(context, android.R.layout.simple_dropdown_item_1line),
+    Filterable {
 
-    private var autocompletePredictions: List<AutocompletePrediction> = emptyList()
+    private val predictions = mutableListOf<AutocompletePrediction>()
 
-    override fun getCount(): Int = autocompletePredictions.size
+    override fun getCount(): Int = predictions.size
 
-    override fun getItem(position: Int): AutocompletePrediction = autocompletePredictions[position]
+    override fun getItem(position: Int): AutocompletePrediction = predictions[position]
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: LayoutInflater.from(context).inflate(android.R.layout.simple_dropdown_item_1line, parent, false)
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(android.R.layout.simple_dropdown_item_1line, parent, false)
         val item = getItem(position)
-        view.findViewById<TextView>(android.R.id.text1).text = item.getPrimaryText(null).toString()
+        (view.findViewById(android.R.id.text1) as TextView).text =
+            item.getPrimaryText(null).toString()
         return view
     }
 
@@ -38,26 +41,25 @@ class CityAutocompleteAdapter(
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val filterResults = FilterResults()
-                if (constraint.isNullOrBlank()) {
-                    filterResults.values = emptyList<AutocompletePrediction>()
-                    filterResults.count = 0
-                } else {
-                    lifecycleScope.launch {
-                        filterResults.values = getAutocomplete(constraint)
-                        filterResults.count = autocompletePredictions.size
+                if (!constraint.isNullOrBlank()) {
+                    coroutineScope.launch {
+                        val request = FindAutocompletePredictionsRequest.builder()
+                            .setQuery(constraint.toString())
+                            .build()
+
+                        val response = placesClient.findAutocompletePredictions(request).await()
+                        predictions.clear()
+                        predictions.addAll(response.autocompletePredictions)
+                        filterResults.values = predictions
+                        filterResults.count = predictions.size
                         publishResults(constraint, filterResults)
                     }
                 }
                 return filterResults
             }
 
-            override fun publishResults(constraint: CharSequence?, results: FilterResults) {
-                autocompletePredictions = if (results.values is List<*>) {
-                    results.values as List<AutocompletePrediction>
-                } else {
-                    emptyList()
-                }
-                if (results.count > 0) {
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                if (results != null && results.count > 0) {
                     notifyDataSetChanged()
                 } else {
                     notifyDataSetInvalidated()
@@ -65,16 +67,7 @@ class CityAutocompleteAdapter(
             }
         }
     }
-
-    private suspend fun getAutocomplete(constraint: CharSequence): List<AutocompletePrediction> {
-        val request = FindAutocompletePredictionsRequest.builder()
-            .setQuery(constraint.toString())
-            .build()
-
-        val response = placesClient.findAutocompletePredictions(request).await()
-        return response.autocompletePredictions.also {
-            autocompletePredictions = it
-        }
-    }
 }
+
+
 
