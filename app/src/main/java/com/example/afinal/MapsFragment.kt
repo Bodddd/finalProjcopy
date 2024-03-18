@@ -46,6 +46,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
+        map.uiSettings.isZoomControlsEnabled = true
+
         context?.let { ctx ->
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(ctx, R.raw.style_json))
         } ?: Log.e("MapsFragment", "Context is null, cannot set map style")
