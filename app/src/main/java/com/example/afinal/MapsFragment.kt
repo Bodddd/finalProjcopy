@@ -58,7 +58,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 val cityMarkerOptions = MarkerOptions()
                     .position(it)
                     .title("City")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker_city1))
                 map.addMarker(cityMarkerOptions)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 13.5F))
             }
@@ -66,7 +66,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             landmarksLatLng?.forEach { latLng ->
                 val landmarkMarkerOptions = MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker_icons))
                 map.addMarker(landmarkMarkerOptions.position(latLng))
             }
         }
